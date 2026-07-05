@@ -29,7 +29,7 @@ def add_brand(brand_name, status="Active"):
 
     try:
         cur.execute(
-            "INSERT INTO brands(brand_name,status) VALUES(?,?)",
+            "INSERT INTO brands(brand_name, status) VALUES (?, ?)",
             (brand_name, status)
         )
         conn.commit()
@@ -45,17 +45,44 @@ def get_brands():
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id,
-               brand_name,
-               status
+        SELECT id, brand_name, status
         FROM brands
         ORDER BY brand_name
     """)
 
     rows = cur.fetchall()
-
     conn.close()
+    return rows
 
+
+def get_brand(brand_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT id, brand_name, status
+        FROM brands
+        WHERE id=?
+    """, (brand_id,))
+
+    row = cur.fetchone()
+    conn.close()
+    return row
+
+
+def search_brands(keyword):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT id, brand_name, status
+        FROM brands
+        WHERE brand_name LIKE ?
+        ORDER BY brand_name
+    """, ('%' + keyword + '%',))
+
+    rows = cur.fetchall()
+    conn.close()
     return rows
 
 
@@ -87,17 +114,30 @@ def delete_brand(brand_id):
     conn.close()
 
 
-def brand_exists(name):
+def brand_exists(name, exclude_id=None):
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute(
-        "SELECT id FROM brands WHERE brand_name=?",
-        (name,)
-    )
+    if exclude_id:
+        cur.execute(
+            """
+            SELECT id
+            FROM brands
+            WHERE brand_name=? AND id<>?
+            """,
+            (name, exclude_id)
+        )
+    else:
+        cur.execute(
+            """
+            SELECT id
+            FROM brands
+            WHERE brand_name=?
+            """,
+            (name,)
+        )
 
     row = cur.fetchone()
-
     conn.close()
 
     return row is not None
