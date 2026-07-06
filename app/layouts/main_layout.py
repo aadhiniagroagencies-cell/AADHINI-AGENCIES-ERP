@@ -31,13 +31,13 @@ class MainLayout(ttk.Frame):
         body = ttk.Frame(self)
         body.pack(fill=BOTH, expand=True)
 
-        # Sidebar
-        sidebar = Sidebar(body)
-        sidebar.pack(side=LEFT, fill=Y)
+        # ---------------- Content ----------------
+        self.content = Content(body)
+        self.content.pack(side=LEFT, fill=BOTH, expand=True)
 
-        # Content Area
-        content = Content(body)
-        content.pack(side=LEFT, fill=BOTH, expand=True)
+        # ---------------- Sidebar ----------------
+        self.sidebar = Sidebar(body, self.content)
+        self.sidebar.pack(side=LEFT, fill=Y, before=self.content)
 
         # ---------------- Status Bar ----------------
         status = StatusBar(self)

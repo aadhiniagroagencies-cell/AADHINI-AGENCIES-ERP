@@ -6,42 +6,58 @@ Database Manager
 import sqlite3
 from pathlib import Path
 
-from app.core.config import Config
+
+DB_PATH = Path("database/aadhini.db")
 
 
 class DatabaseManager:
-    """Handles SQLite database connection"""
 
-    def __init__(self):
-        # Create database folder if it doesn't exist
-        Path(Config.DATABASE_DIR).mkdir(parents=True, exist_ok=True)
-
-        self.db_path = Config.DATABASE_FILE
-
-    def get_connection(self):
-        """Return SQLite connection"""
-        return sqlite3.connect(self.db_path)
+    def connect(self):
+        return sqlite3.connect(DB_PATH)
 
     def initialize_database(self):
-        """Create required tables"""
+        self.create_company_table()
 
-        conn = self.get_connection()
+    def create_company_table(self):
+
+        conn = self.connect()
         cursor = conn.cursor()
 
-        # Company Table
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS company (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                company_name TEXT NOT NULL,
-                gstin TEXT,
-                mobile TEXT,
-                email TEXT,
-                address TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
+        CREATE TABLE IF NOT EXISTS company (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            company_name TEXT NOT NULL,
+            company_code TEXT,
+
+            gstin TEXT,
+            pan TEXT,
+
+            phone TEXT,
+            mobile TEXT,
+
+            email TEXT,
+            website TEXT,
+
+            contact_person TEXT,
+
+            address1 TEXT,
+            address2 TEXT,
+
+            city TEXT,
+            district TEXT,
+            state TEXT,
+            country TEXT DEFAULT 'India',
+
+            pincode TEXT,
+
+            status TEXT DEFAULT 'Active',
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
         """)
 
         conn.commit()
         conn.close()
-
-        print("Database initialized successfully.")

@@ -1,9 +1,9 @@
 """
-Company Service
 AADHINI ERP Enterprise
+Company Service
 """
 
-from app.modules.masters.company_repository import CompanyRepository
+from app.modules.masters.company.company_repository import CompanyRepository
 
 
 class CompanyService:
@@ -11,11 +11,25 @@ class CompanyService:
     def __init__(self):
         self.repository = CompanyRepository()
 
-    def save_company(self, company):
-        self.repository.add_company(company)
+    def save_company(
+        self,
+        company_name,
+        gstin,
+        phone,
+        email,
+        website,
+        address
+    ):
 
-    def get_companies(self):
+        self.repository.save_company(
+            company_name,
+            gstin,
+            phone,
+            email,
+            website,
+            address
+        )
+
+    def get_all_companies(self):
+
         return self.repository.get_all_companies()
-
-    def delete_company(self, company_id):
-        self.repository.delete_company(company_id)
